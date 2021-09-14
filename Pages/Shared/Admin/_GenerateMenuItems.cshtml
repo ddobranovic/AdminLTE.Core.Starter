@@ -1,0 +1,39 @@
+﻿@using AdminLte.Core.Starter.Extensions
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model List<Core.Starter.Model.MenuItem>
+@{
+}
+@if (Model == null)
+{
+    <p>No menus defined!</p>
+}
+else
+{
+    @foreach (var menuItem in Model)
+    {
+        @if (menuItem.Subitems != null && menuItem.Subitems.Count > 0)
+        {
+            <li class="nav-item @(Html.IsPageActive(MenuExtensions.GetSubitemsPaths(menuItem).ToArray())?"menu-open":"")">
+                <a href="#" class="nav-link @(Html.IsPageActive(MenuExtensions.GetSubitemsPaths(menuItem).ToArray())?"active":"")">
+                    <i class="nav-icon @menuItem.Class"></i>
+                    <p>
+                        @menuItem.Name
+                        <i class="right @(Html.IsPageActive(MenuExtensions.GetSubitemsPaths(menuItem).ToArray())?"fas fa-angle-down":"fas fa-angle-left")"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    @await Html.PartialAsync("Admin/_GenerateMenuItems", menuItem.Subitems)
+                </ul>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item">
+                <a asp-page="@menuItem.PageUrl" class="nav-link @(Html.IsPageActive(menuItem.PageUrl)?"active":"")">
+                    <i class="far @menuItem.Class"></i>
+                    <p>@menuItem.Name</p>
+                </a>
+            </li>
+        }
+    }
+}
